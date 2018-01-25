@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DesafioStone.Models;
+using MongoDB.Driver;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace DesafioStone.Controllers
 {
     [Route("api/[controller]")]
-    public class ItemController : ControllerBase
+    public class ItemsController : ControllerBase
     {
         // GET: api/<controller>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public List<Item> Get()
         {
-            return new string[] { "value1", "value2" };
+            MongoDbContext dbContext = new MongoDbContext();
+            return dbContext.Items.Find(new BsonDocument()).ToList();
         }
 
         // GET api/<controller>/5
