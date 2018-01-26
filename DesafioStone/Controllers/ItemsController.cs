@@ -65,8 +65,17 @@ namespace DesafioStone.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public IActionResult Post([FromBody]Item item)
         {
+            MongoDbContext dbContext = new MongoDbContext();
+
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                dbContext.Items.InsertOne(item);
+                return Ok(new { Location = HttpContext.Request.Host + "/api/items/" + item.Codigo});
+            }
         }
 
         // PUT api/<controller>/5
