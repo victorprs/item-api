@@ -6,6 +6,7 @@ using DesafioStone.Models;
 using MongoDB.Driver;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using System.Net.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,17 +17,32 @@ namespace DesafioStone.Controllers
     {
         // GET: api/<controller>
         [HttpGet]
-        public List<Item> Get()
+        public IActionResult Get()
         {
             MongoDbContext dbContext = new MongoDbContext();
-            return dbContext.Items.Find(new BsonDocument()).ToList();
+            try
+            {
+                return Ok(dbContext.Items.Find(new BsonDocument()).ToList());
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound(new JsonResult("No items found"));
+            }
         }
 
         // GET api/<controller>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{codigo}")]
+        public IActionResult Get(int codigo)
         {
-            return "value";
+            MongoDbContext dbContext = new MongoDbContext();
+            try
+            {
+                return Ok(dbContext.Items.Find(x => x.Codigo == codigo).Single());
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound(new JsonResult(String.Format("No item with codigo = {0} was found", codigo)));
+            }
         }
 
         // POST api/<controller>
