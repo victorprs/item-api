@@ -79,15 +79,19 @@ namespace DesafioStone.Controllers
         }
 
         // PUT api/<controller>/5
-        [HttpPut("{id}")]
+        [HttpPut("{codigo}")]
         public void Put(int id, [FromBody]string value)
         {
         }
 
         // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{codigo}")]
+        public IActionResult Delete(int codigo)
         {
+            MongoDbContext dbContext = new MongoDbContext();
+            dbContext.Items.DeleteOne(x => x.Codigo == codigo);
+
+            return NoContent();
         }
     }
 }
