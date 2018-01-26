@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Net.Http;
+using System.Linq.Expressions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,12 +18,29 @@ namespace DesafioStone.Controllers
     {
         // GET: api/<controller>
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery]bool livre, [FromQuery]int andar, [FromQuery]String descricao)
         {
             MongoDbContext dbContext = new MongoDbContext();
+
+
+            var builder = Builders<Item>.Filter;
+            var livreFilter = builder.Eq(x => x.Livre, livre);
+            var andarFilter = builder.Eq(x => x.Andar, andar);
+            var descricaoFilter = builder.Eq(x => x.Descricao, descricao);
+            FilterDefinition<Item> query = builder.Empty;
+
+            if (Request.Query.ContainsKey("livre"))
+                query = query & livreFilter;
+            if (Request.Query.ContainsKey("andar"))
+                query = query & andarFilter;
+            if (Request.Query.ContainsKey("descricao"))
+                query = query & descricaoFilter;
             try
             {
-                return Ok(dbContext.Items.Find(new BsonDocument()).ToList());
+                if (Request.Query.Count == 0)
+                    return Ok(dbContext.Items.Find(new BsonDocument()).ToList());
+                else
+                    return Ok(dbContext.Items.Find(query).ToList());
             }
             catch (InvalidOperationException)
             {
