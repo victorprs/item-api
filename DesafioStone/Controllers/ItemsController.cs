@@ -22,7 +22,6 @@ namespace DesafioStone.Controllers
         {
             MongoDbContext dbContext = new MongoDbContext();
 
-
             var builder = Builders<Item>.Filter;
             var livreFilter = builder.Eq(x => x.Livre, livre);
             var andarFilter = builder.Eq(x => x.Andar, andar);
