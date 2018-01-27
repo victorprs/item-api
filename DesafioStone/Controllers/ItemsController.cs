@@ -74,14 +74,21 @@ namespace DesafioStone.Controllers
                     return BadRequest(ModelState);
 
                 dbContext.Items.InsertOne(item);
-                return Ok(new { Location = HttpContext.Request.Host + "/api/items/" + item.Codigo});
+                return Created(HttpContext.Request.Host + "/api/items/" + item.Codigo, item);
             }
         }
 
         // PUT api/<controller>/5
         [HttpPut("{codigo}")]
-        public void Put(int id, [FromBody]string value)
+        public IActionResult Put(int codigo, [FromBody]Item item)
         {
+            MongoDbContext dbContext = new MongoDbContext();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            dbContext.Items.UpdateOne(x => x.Codigo == codigo, new BsonDocument("$set", item.ToBsonDocument()));
+            return Ok(new { Location = HttpContext.Request.Host + "/api/items/" + item.Codigo });
         }
 
         // DELETE api/<controller>/5

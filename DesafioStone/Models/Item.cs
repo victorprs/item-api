@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace DesafioStone.Models
 {
+    [BsonIgnoreExtraElements]
     public class Item
     {
-        public ObjectId Id { get; set; }
+        //public ObjectId Id { get; set; }
         [BsonElement("codigo")]
         public int Codigo { get; set; }
         [BsonElement("descricao")]
