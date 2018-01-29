@@ -121,5 +121,16 @@ namespace DesafioStone.Tests
             var response = await client.DeleteAsync("api/items/3");
             Assert.Equal(previousCount - 1, dbContext.Items.Count(FilterDefinition<Item>.Empty));
         }
+
+        [Fact]
+        public async void TestPutShouldUpdateItem()
+        {
+            var item2Modified = item2;
+            item2Modified.Livre = false;
+            item2Modified.AtualizadoEm = new DateTime(2018, 01, 02);
+            var stringContent = new StringContent(JsonConvert.SerializeObject(item2Modified), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/items/2", stringContent);
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        }
     }
 }
