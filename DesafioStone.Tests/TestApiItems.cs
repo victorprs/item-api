@@ -20,6 +20,7 @@ namespace DesafioStone.Tests
 
         Item item1;
         Item item2;
+        Item item3;
 
         public TestApiItems()
         {
@@ -41,6 +42,15 @@ namespace DesafioStone.Tests
                 CriadoEm = new DateTime(2018, 01, 01),
                 AtualizadoEm = new DateTime(2018, 01, 01)
             };
+            item3 = new Item
+            {
+                Codigo = 3,
+                Andar = 7,
+                Descricao = "outros",
+                Livre = false,
+                CriadoEm = new DateTime(2018, 01, 01),
+                AtualizadoEm = new DateTime(2018, 01, 01)
+            };
 
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -53,6 +63,7 @@ namespace DesafioStone.Tests
 
             MongoDbContext dbContext = new MongoDbContext();
             dbContext.Items.InsertOne(item1);
+            dbContext.Items.InsertOne(item3);
 
             Startup.AppSettingsFileName = "testsettings.json";
             testServer = new TestServer(new WebHostBuilder().UseStartup<Startup>());
@@ -98,6 +109,17 @@ namespace DesafioStone.Tests
             Assert.Equal(item1.AtualizadoEm, result.AtualizadoEm);
             Assert.Equal(item1.CriadoEm, result.CriadoEm);
             Assert.Equal(item1.Livre, result.Livre);
+        }
+
+        [Fact]
+        public async void TestDeleteShouldRemove1InDb()
+        {
+            MongoDbContext dbContext = new MongoDbContext();
+
+            long previousCount = dbContext.Items.Count(FilterDefinition<Item>.Empty);
+            
+            var response = await client.DeleteAsync("api/items/3");
+            Assert.Equal(previousCount - 1, dbContext.Items.Count(FilterDefinition<Item>.Empty));
         }
     }
 }
