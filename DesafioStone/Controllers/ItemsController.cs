@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Net.Http;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -43,7 +44,7 @@ namespace DesafioStone.Controllers
             }
             catch (InvalidOperationException)
             {
-                return NotFound(new JsonResult("No items found"));
+                return Ok(new JsonResult("No items found"));
             }
         }
 
@@ -72,8 +73,16 @@ namespace DesafioStone.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                dbContext.Items.InsertOne(item);
-                return Created(HttpContext.Request.Host + "/api/items/" + item.Codigo, item);
+                try
+                {
+                    dbContext.Items.InsertOne(item);
+                    return Created(HttpContext.Request.Host + "/api/items/" + item.Codigo, item);
+                }
+                catch (MongoWriteException)
+                {
+                    return StatusCode(StatusCodes.Status409Conflict, "Codigo existente");
+                }
+
             }
         }
 

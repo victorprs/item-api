@@ -14,6 +14,7 @@ namespace DesafioStone
     {
         public static void Main(string[] args)
         {
+            Startup.AppSettingsFileName = "appsettings.json";
             BuildWebHost(args).Run();
         }
 

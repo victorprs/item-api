@@ -15,12 +15,13 @@ namespace DesafioStone
     public class Startup
     {
         public IConfiguration Config { get; }
+        public static String AppSettingsFileName { get; set; }
 
         public Startup()
         {
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile(AppSettingsFileName);
             Config = configurationBuilder.Build();
         }
 
